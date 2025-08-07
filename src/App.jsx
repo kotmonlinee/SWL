@@ -73,7 +73,7 @@ function App() {
       } else if (spinCount === 1) {
         setShowWinModal(true);
       }
-    }, 4000); // 匹配需求文档中的4秒旋转动画
+    }, 5000); // 匹配需求文档中的4秒旋转动画
     // 发送GA事件
     ReactGA.event({
       category: 'Wheel',
