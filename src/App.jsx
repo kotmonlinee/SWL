@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
-import prizewheelBg from './prizewheel-bg.png';
+import prizewheelBg from './prizewheel-bg.jpg';
 import walmartImage from './walmart-bg.png';
 import ReactGA from 'react-ga4';  
 
@@ -31,10 +31,10 @@ function App() {
     setClickId(id);
   }, []);
 
-  // 在组件挂载时检查
+  // 在组件挂载时检查Clarity初始化状态
   useEffect(() => {
     const checkClarity = setInterval(() => {
-      if (window.clarity && typeof window.clarity === 'function') {
+      if (window.clarityInitialized) {
         console.log('Clarity loaded successfully');
         clearInterval(checkClarity);
       }
@@ -85,12 +85,12 @@ function App() {
 
     // 发送 Clarity 自定义事件
     // 转盘旋转事件（spinWheel 函数内）
-    if (window.clarity && typeof window.clarity === 'function') {
-      window.clarity('trackEvent', 'wheel_spin', {
-        spin_count: spinCount + 1,
-        target_sector: spinCount === 0 ? 1 : 4
-      });
-    }
+    // if (window.clarityInitialized && window.clarity && typeof window.clarity === 'function') {
+    //   window.clarity('trackEvent', 'wheel_spin', {
+    //     spin_count: spinCount + 1,
+    //     target_sector: spinCount === 0 ? 1 : 4
+    //   });
+    // }
   };
 
   // 模态框关闭处理
@@ -117,13 +117,13 @@ function App() {
     }
   });
 
-  // 发送 Clarity 自定义事件
-  if (window.clarity && typeof window.clarity === 'function') {
-    window.clarity('trackEvent', 'reward_claimed', {
-      click_id: clickId || 'unknown',
-      timestamp: new Date().toISOString()
-    });
-  }
+  // // 发送 Clarity 自定义事件
+  // if (window.clarityInitialized && window.clarity && typeof window.clarity === 'function') {
+  //   window.clarity('trackEvent', 'reward_claimed', {
+  //     click_id: clickId || 'unknown',
+  //     timestamp: new Date().toISOString()
+  //   });
+  // }
 
   if (!clickId) return; // 确保click_id存在
 
@@ -223,12 +223,14 @@ function App() {
             <button 
               className="modal-btn claim-btn"
               onClick={() => {
-                // 1. 先发送打点请求
-                trackConversionEvent();
-                
-                // 2. 再执行页面跳转
-                window.location.href=`https://www.hjqqot8trk.com/LR9KH/ZQMP51/?sub1=${clickId}`;
-
+                try {
+                  // 1. 先发送打点请求
+                  trackConversionEvent();
+                } catch (error) {
+                  console.error('打点请求出错:', error);
+                }
+                // 2. 确保跳转执行
+                window.location.href=`https://www.hjqqot8trk.com/LR9KH/21WL22Z/?sub1=${clickId || 'unknown'}`;
               }}
             >
               Claim Now! 💰
